@@ -2,12 +2,14 @@ package tn.esprit.microservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
-public class MsPublication1Application {
+@EnableEurekaClient
+public class MsPublication2Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MsPublication1Application.class, args);
+		SpringApplication.run(MsPublication2Application.class, args);
 	}
 
 }
