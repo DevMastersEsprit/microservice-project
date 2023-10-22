@@ -2,10 +2,10 @@
 FROM openjdk:8
 
 # Exposez le port sur lequel votre application Spring Boot écoute
-EXPOSE 8760
+EXPOSE 8761
 
 # Copiez le fichier JAR de votre application dans l'image
-ADD target/commentaire.jar commentaire.jar
+ADD target/eureka.jar eureka.jar
 
 # Commande pour exécuter l'application lorsque le conteneur démarre
-ENTRYPOINT ["java", "-jar", "/commentaire.jar"]
+ENTRYPOINT ["java", "-jar", "/eureka.jar"]
