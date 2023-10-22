@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -41,11 +42,11 @@ public class PublicationRestApi {
 
     @PostMapping(value="/addPub")
     public ResponseEntity<Publication> createPublication(@RequestBody Publication pub) {
-    	System.out.println(pub);
-        return new ResponseEntity<Publication>(pubService.addPublication(pub), HttpStatus.CREATED);
+    	return new ResponseEntity<Publication>(pubService.addPublication(pub), HttpStatus.CREATED);
     }
     
     @PutMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Publication> updatePublication(@RequestBody Publication Publication, @PathVariable (value = "id") int id) {
         return new ResponseEntity<Publication>(pubService.updatePublication(Publication,id), HttpStatus.CREATED);
     }

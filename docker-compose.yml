@@ -1,0 +1,122 @@
+version: "2.22.0"
+services:
+
+  Publication:
+    container_name: publication
+    build: .\MSPublication-2
+    ports:
+      - "8089:8082"
+    hostname: publication
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_2:3306/publicationDB?createDatabaseIfNotExist=true&userSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka
+    image: "publication"
+    depends_on:
+      - Eureka
+      - docker-mysql_2
+
+  # Evenement:
+  #   container_name: evenement
+  #   build: .\ms_evenement
+  #   ports:
+  #     - "8080:8080"
+  #   hostname: evenement
+  #   environment:
+  #     - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_1:3306/evenementDB?createDatabaseIfNotExist=true&userSSL=false&max_allowed_packet=15728640
+  #     - SPRING_DATASOURCE_USERNAME=root
+  #     - SPRING_DATASOURCE_PASSWORD=root
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka
+  #   image: "msevenement"
+  #   depends_on:
+  #     - Eureka
+  #     - docker-mysql_1
+      
+  # Page:
+  #   container_name: page
+  #   build: .\Page Microservice
+  #   ports:
+  #     - "8083:8083"
+  #   hostname: page
+  #   environment:
+  #     - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_2:3306/pageDB?autoReconnect=true&useSSL=false
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+  #   image: "page"
+  #   depends_on:
+  #     - Eureka
+  #     - docker-mysql_3
+
+  # Commentaire:
+  #   container_name: commentaire
+  #   build: .\commentaire
+  #   ports:
+  #     - "8082:8760"
+  #   hostname: commentaire
+  #   environment:
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+  #   image: "commentaire"
+  #   depends_on:
+  #     - Eureka
+
+  # Groupe:
+  #   container_name: groupe
+  #   build: .\Groupe
+  #   ports:
+  #     - "8088:8088"
+  #   hostname: groupe
+  #   environment:
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+  #   image: "groupe-image:1.0"
+  #   depends_on:
+  #     - Eureka
+
+  Eureka:
+    container_name: eureka
+    build: .\EurekaServer
+    image: "eureka"
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+
+  ApiGateway:
+    container_name: ApiGateway
+    build: .\APIgateway
+    image: "gateway"
+    restart: always
+    depends_on:
+      - Eureka
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+      - EUREKA_INSTANCE_LEASERENEWALINTERVALINSECONDS=10
+      - EUREKA_INSTANCE_LEASEEXPIRATIONDURATIONINSECONDS=30
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_ID=PublicationMS
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http://PublicationMS:8080
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/publicationMS/publication/**
+
+  # docker-mysql_1:
+  #   image: "mysql:5.6"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=root
+  #     - MYSQL_DATABASE=evenementDB
+  #   ports:
+  #     - 3308:3306
+
+  docker-mysql_2:
+    image: "mysql:5.6"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=publicationDB
+    ports:
+      - 3308:3306
+
+  # docker-mysql_3:
+  #   image: "mysql:5.6"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=iheb
+  #     - MYSQL_DATABASE=pageDB
+  #   ports:
+  #     - 3308:3306
