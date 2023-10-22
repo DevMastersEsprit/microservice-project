@@ -1,2 +1,16 @@
 /.metadata/
-/EurekaServer/eureka.jar
+/.mvn/
+/mvnw
+/mvnw.cmd
+
+/Apigateway/mvn
+/Apigateway/mvnw
+/Apigateway/mvnw.cmd
+
+/EurekaServer/mvn
+/EurekaServer/mvnw
+/EurekaServer/mvnw.cmd
+
+/ms-page/mvn
+/ms-page/mvnw
+/ms-page/mvnw.cmd

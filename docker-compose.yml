@@ -1,0 +1,52 @@
+version: "2.21.0"
+services:
+
+  Page:
+    container_name: ms-page
+    build: .\ms-page
+    ports:
+      - "8083:8083"
+    hostname: ms-page
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_3:3306/pageDB?autoReconnect=true&useSSL=false
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+    image: "ms-page"
+    depends_on:
+      - Eureka
+      - docker-mysql_3
+
+  Eureka:
+    container_name: eureka
+    build: .\EurekaServer
+    image: "eureka"
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+      
+  docker-mysql_3:
+    image: "mysql:5.6"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=pageDB
+    ports:
+      - 3308:3306
+      
+
+  ApiGateway:
+    container_name: ApiGateway
+    build: .\APIgateway
+    image: "gateway"
+    restart: always
+    depends_on:
+      - Eureka
+      - docker-mysql_3
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+      - EUREKA_INSTANCE_LEASERENEWALINTERVALINSECONDS=10
+      - EUREKA_INSTANCE_LEASEEXPIRATIONDURATIONINSECONDS=30
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_ID=ms-page
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http://localhost:8083
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/PageService/api/Pages/**
