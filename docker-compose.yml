@@ -1,6 +1,36 @@
 version: "2.22.0"
 services:
 
+ #
+  
+  # Evenement:
+  #   container_name: evenement
+  #   build: .\ms_evenement
+  #   ports:
+  #     - "8080:8080"
+  #   hostname: evenement
+  #   environment:
+  #     - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_2:3306/evenementDB?autoReconnect=true&useSSL=false
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+  #   image: "msevenement"
+  #   depends_on:
+  #     - Eureka
+  #     - docker-mysql_1
+  
+  # Page:
+  #   container_name: page
+  #   build: .\Page Microservice
+  #   ports:
+  #     - "8083:8083"
+  #   hostname: page
+  #   environment:
+  #     - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_2:3306/pageDB?autoReconnect=true&useSSL=false
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+  #   image: "page"
+  #   depends_on:
+  #     - Eureka
+  #     - docker-mysql_3
+
   Commentaire:
      container_name: commentaire
      build: .\commentaire
@@ -13,7 +43,17 @@ services:
      depends_on:
        - Eureka
 
-
+  # Groupe:
+  #   container_name: groupe
+  #   build: .\Groupe
+  #   ports:
+  #     - "8088:8088"
+  #   hostname: groupe
+  #   environment:
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+  #   image: "groupe-image:1.0"
+  #   depends_on:
+  #     - Eureka
 
   Eureka:
     container_name: eureka
@@ -24,12 +64,24 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
 
-  
- 
+  # docker-mysql_1:
+  #   image: "mysql:5.6"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=wacef
+  #     - MYSQL_DATABASE=evenementDB
+  #   ports:
+  #     - 3308:3306
+#
 
-
+  # docker-mysql_3:
+  #   image: "mysql:5.6"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=iheb
+  #     - MYSQL_DATABASE=pageDB
+  #   ports:
+  #     - 3308:
   ApiGateway:
-    container_name: ApiGateway
+    container_name: gateway
     build: .\APIgateway
     image: "gateway"
     restart: always
@@ -42,5 +94,5 @@ services:
       - EUREKA_INSTANCE_LEASERENEWALINTERVALINSECONDS=10
       - EUREKA_INSTANCE_LEASEEXPIRATIONDURATIONINSECONDS=30
       - SPRING_CLOUD_GATEWAY_ROUTES_0_ID=CommentServices
-      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=lb://Commentaire
-      - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/CommentServices/api/comments/**
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http:/CommentServices/:8082
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/api/comments/**
