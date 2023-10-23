@@ -5,7 +5,7 @@ FROM openjdk:8
 EXPOSE 8189
 
 # Copiez le fichier JAR de votre application dans l'image
-ADD target/commentaire.jar commentaire.jar
+ADD target/commentaire-0.0.1-SNAPSHOT.jar commentaire.jar
 
 # Commande pour exécuter l'application lorsque le conteneur démarre
 ENTRYPOINT ["java", "-jar", "/commentaire.jar"]
