@@ -1,0 +1,46 @@
+version: "2.22.0"
+services:
+
+  Commentaire:
+     container_name: commentaire
+     build: .\commentaire
+     ports:
+       - "8760:8082"
+     hostname: commentaire
+     environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+     image: "commentaire"
+     depends_on:
+       - Eureka
+
+
+
+  Eureka:
+    container_name: eureka
+    build: .\EurekaServer
+    image: "eureka"
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+
+  
+ 
+
+
+  ApiGateway:
+    container_name: ApiGateway
+    build: .\APIgateway
+    image: "gateway"
+    restart: always
+    depends_on:
+      - Eureka
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
+      - EUREKA_INSTANCE_LEASERENEWALINTERVALINSECONDS=10
+      - EUREKA_INSTANCE_LEASEEXPIRATIONDURATIONINSECONDS=30
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_ID=CommentServices
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=lb://Commentaire
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/CommentServices/api/comments/**
