@@ -40,24 +40,26 @@ services:
       - "8083:8083"
     hostname: ms-page
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_3:3306/pageDB?autoReconnect=true&useSSL=false
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_2:3306/pageDB?createDatabaseIfNotExist=true&userSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
     image: "ms-page"
     depends_on:
       - Eureka
       - docker-mysql_3
-
-  # Commentaire:
-  #   container_name: commentaire
-  #   build: .\commentaire
-  #   ports:
-  #     - "8082:8760"
-  #   hostname: commentaire
-  #   environment:
-  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
-  #   image: "commentaire"
-  #   depends_on:
-  #     - Eureka
+  
+  Commentaire:
+     container_name: commentaire
+     build: .\commentaire
+     ports:
+       - "8085:8085"
+     hostname: commentaire
+     environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+     image: "commentaire"
+     depends_on:
+       - Eureka
 
   Groupe:
     container_name: groupe
@@ -105,6 +107,9 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES_2_ID=groupe
       - SPRING_CLOUD_GATEWAY_ROUTES_2_URI=http://localhost:8084
       - SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0=Path=/groupe/groupes/**
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_ID=CommentServices
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http:/CommentServices/:8085
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/api/comments/**
 
   # docker-mysql_1:
   #   image: "mysql:5.6"
@@ -125,8 +130,7 @@ services:
  docker-mysql_3:
     image: "mysql:5.6"
     environment:
-      - spring.datasource.username=root
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=pageDB
     ports:
       - 3308:3306

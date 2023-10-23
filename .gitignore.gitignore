@@ -1,0 +1,16 @@
+/.metadata/
+/.mvn/
+/mvnw
+/mvnw.cmd
+
+/Apigateway/mvn
+/Apigateway/mvnw
+/Apigateway/mvnw.cmd
+
+/EurekaServer/mvn
+/EurekaServer/mvnw
+/EurekaServer/mvnw.cmd
+
+/commentaire/mvn
+/commentaire/mvnw
+/commentaire/mvnw.cmd
