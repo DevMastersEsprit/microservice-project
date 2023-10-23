@@ -12,7 +12,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka
-    image: "msevenement"
+    image: "evenement"
     depends_on:
       - Eureka
       - docker-mysql_1
@@ -69,7 +69,7 @@ services:
     hostname: groupe
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
-    image: "groupe-image:1.0"
+    image: "groupe"
     depends_on:
       - Eureka
         
@@ -89,6 +89,8 @@ services:
     restart: always
     depends_on:
       - Eureka
+      - docker-mysql_1
+      - docker-mysql_2
       - docker-mysql_3
     ports:
       - "8181:8081"
@@ -102,15 +104,15 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES_1_ID=PublicationMS
       - SPRING_CLOUD_GATEWAY_ROUTES_1_URI=http://PublicationMS:8085
       - SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0=Path=/publicationMS/publication/**
-      - SPRING_CLOUD_GATEWAY_ROUTES_2_ID=groupe
-      - SPRING_CLOUD_GATEWAY_ROUTES_2_URI=http://groupe:8087
+      - SPRING_CLOUD_GATEWAY_ROUTES_2_ID=Groupe
+      - SPRING_CLOUD_GATEWAY_ROUTES_2_URI=http://Groupe:8087
       - SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0=Path=/groupe/groupes/**
       - SPRING_CLOUD_GATEWAY_ROUTES_3_ID=CommentServices
-      - SPRING_CLOUD_GATEWAY_ROUTES_3_URI=http:/CommentServices/:8089
-      - SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0=Path=/api/comments/**
-      - SPRING_CLOUD_GATEWAY_ROUTES_4_ID=EvenementMS
-      - SPRING_CLOUD_GATEWAY_ROUTES_4_URI=http://EvenementMS:8091
-      - SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0=Path=/evenementMS/evenement/**
+      - SPRING_CLOUD_GATEWAY_ROUTES_3_URI=http:/CommentServices:8089
+      - SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0=Path=/CommentServices/api/comments/**
+      - SPRING_CLOUD_GATEWAY_ROUTES_4_ID=ms-evenement
+      - SPRING_CLOUD_GATEWAY_ROUTES_4_URI=http://ms-evenement:8091
+      - SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0=Path=/EvenementService/evenement/**
   
   docker-mysql_1:
     image: "mysql:5.6"
@@ -118,7 +120,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=evenementDB
     ports:
-      - 3308:3306
+      - 3307:3306
 
   docker-mysql_2:
     image: "mysql:5.6"
@@ -134,4 +136,4 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=pageDB
     ports:
-      - 3308:3306
+      - 3309:3306
