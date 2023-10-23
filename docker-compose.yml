@@ -1,5 +1,21 @@
 version: "2.21.0"
 services:
+      
+  Evenement:
+    container_name: evenement
+    build: .\ms_evenement
+    ports:
+      - "8191:8091"
+    hostname: evenement
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_1:3306/evenementDB?createDatabaseIfNotExist=true&userSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka
+    image: "msevenement"
+    depends_on:
+      - Eureka
+      - docker-mysql_1
 
   Publication:
     container_name: publication
@@ -17,22 +33,6 @@ services:
       - Eureka
       - docker-mysql_2
 
-  # Evenement:
-  #   container_name: evenement
-  #   build: .\ms_evenement
-  #   ports:
-  #     - "8080:8080"
-  #   hostname: evenement
-  #   environment:
-  #     - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_1:3306/evenementDB?createDatabaseIfNotExist=true&userSSL=false&max_allowed_packet=15728640
-  #     - SPRING_DATASOURCE_USERNAME=root
-  #     - SPRING_DATASOURCE_PASSWORD=root
-  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka
-  #   image: "msevenement"
-  #   depends_on:
-  #     - Eureka
-  #     - docker-mysql_1
-      
   Page:
     container_name: ms-page
     build: .\ms-page
@@ -72,7 +72,7 @@ services:
     image: "groupe-image:1.0"
     depends_on:
       - Eureka
-
+        
   Eureka:
     container_name: eureka
     build: .\EurekaServer
@@ -82,8 +82,6 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://Eureka:8761/eureka/
       
-      
-
   ApiGateway:
     container_name: ApiGateway
     build: .\APIgateway
@@ -110,17 +108,17 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES_3_ID=CommentServices
       - SPRING_CLOUD_GATEWAY_ROUTES_3_URI=http:/CommentServices/:8089
       - SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0=Path=/api/comments/**
-      # - SPRING_CLOUD_GATEWAY_ROUTES_4_ID=CommentServices
-      # - SPRING_CLOUD_GATEWAY_ROUTES_4_URI=http:/CommentServices/:8091
-      # - SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0=Path=/api/comments/**
-
-  # docker-mysql_1:
-  #   image: "mysql:5.6"
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=root
-  #     - MYSQL_DATABASE=evenementDB
-  #   ports:
-  #     - 3308:3306
+      - SPRING_CLOUD_GATEWAY_ROUTES_4_ID=EvenementMS
+      - SPRING_CLOUD_GATEWAY_ROUTES_4_URI=http://EvenementMS:8091
+      - SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0=Path=/evenementMS/evenement/**
+  
+  docker-mysql_1:
+    image: "mysql:5.6"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=evenementDB
+    ports:
+      - 3308:3306
 
   docker-mysql_2:
     image: "mysql:5.6"
@@ -128,7 +126,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=publicationDB
     ports:
-  - 3308:3306
+      - 3308:3306
 
   docker-mysql_3:
     image: "mysql:5.6"
